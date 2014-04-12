@@ -8,9 +8,51 @@
 
 #import "MAMyScene.h"
 
+@interface MAVector : NSObject
+
+@property (nonatomic, assign) CGFloat x;
+@property (nonatomic, assign) CGFloat y;
+
++ (MAVector *)vectorWithX:(CGFloat)x Y:(CGFloat)y;
+- (CGFloat)length;
+
+@end
+
+@implementation MAVector
+
++ (MAVector *)vectorWithX:(CGFloat)x Y:(CGFloat)y {
+    return [[self alloc] initWithX:x Y:y];
+}
+
+- (id)initWithX:(CGFloat)x Y:(CGFloat)y {
+    self = [super init];
+    if (self) {
+        self.x = x;
+        self.y = y;
+    }
+    return self;
+}
+
+- (MAVector *)normalize {
+    return [MAVector vectorWithX:self.x / self.length
+                               Y:self.y / self.length];
+}
+
+- (CGFloat)length {
+    return sqrtf(self.x * self.x + self.y * self.y);
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"[%3f, %3f]", self.x, self.y];
+}
+
+@end
+
 @interface MAMyScene()
 
 @property (nonatomic, strong) SKSpriteNode *player;
+@property (nonatomic, assign) int playerSpeed;
+@property (nonatomic, assign) MAVector *playerDirection;
 @property (nonatomic, strong) SKLabelNode *scoreLabel;
 
 @property (nonatomic, assign) int score;
@@ -30,6 +72,8 @@
 -(id)initWithSize:(CGSize)size {    
     if (self = [super initWithSize:size]) {
         self.backgroundColor = [SKColor colorWithWhite:0.2f alpha:1.f];
+
+        self.playerSpeed = 10;
 
         self.player = [SKSpriteNode spriteNodeWithImageNamed:@"player"];
         self.player.position = CGPointMake(CGRectGetMidX(self.frame),
@@ -52,13 +96,14 @@
     for (UITouch *touch in touches) {
         CGPoint location = [touch locationInNode:self];
 
-        SKAction *moveAction = [SKAction moveTo:location duration:1.f];
-        [self.player runAction:moveAction];
+        self.playerDirection = [[MAVector vectorWithX:location.x - self.player.position.x
+                                                    Y:location.y - self.player.position.y] normalize];
     }
 }
 
 -(void)update:(CFTimeInterval)currentTime {
     /* Called before each frame is rendered */
+
 }
 
 @end
