@@ -14,6 +14,7 @@
 @property (nonatomic, assign) CGFloat y;
 
 + (MAVector *)vectorWithX:(CGFloat)x Y:(CGFloat)y;
++ (MAVector *)vectorZero;
 - (CGFloat)length;
 
 @end
@@ -22,6 +23,10 @@
 
 + (MAVector *)vectorWithX:(CGFloat)x Y:(CGFloat)y {
     return [[self alloc] initWithX:x Y:y];
+}
+
++ (MAVector *)vectorZero {
+    return [[self alloc] initWithX:0.f Y:0.f];
 }
 
 - (id)initWithX:(CGFloat)x Y:(CGFloat)y {
@@ -52,10 +57,12 @@
 
 @property (nonatomic, strong) SKSpriteNode *player;
 @property (nonatomic, assign) int playerSpeed;
-@property (nonatomic, assign) MAVector *playerDirection;
+@property (nonatomic, strong) MAVector *playerDirection;
 @property (nonatomic, strong) SKLabelNode *scoreLabel;
 
 @property (nonatomic, assign) int score;
+
+@property (nonatomic, assign) CFTimeInterval lastUpdateTime;
 
 @end
 
@@ -73,7 +80,8 @@
     if (self = [super initWithSize:size]) {
         self.backgroundColor = [SKColor colorWithWhite:0.2f alpha:1.f];
 
-        self.playerSpeed = 10;
+        self.playerSpeed = 100;
+        self.playerDirection = [MAVector vectorZero];
 
         self.player = [SKSpriteNode spriteNodeWithImageNamed:@"player"];
         self.player.position = CGPointMake(CGRectGetMidX(self.frame),
@@ -92,18 +100,38 @@
     return self;
 }
 
+- (void)_adjustPlayerDirection:(CGPoint)location {
+    self.playerDirection = [[MAVector vectorWithX:location.x - self.player.position.x
+                                                Y:location.y - self.player.position.y] normalize];
+}
+
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     for (UITouch *touch in touches) {
-        CGPoint location = [touch locationInNode:self];
-
-        self.playerDirection = [[MAVector vectorWithX:location.x - self.player.position.x
-                                                    Y:location.y - self.player.position.y] normalize];
+        [self _adjustPlayerDirection:[touch locationInNode:self]];
     }
 }
 
--(void)update:(CFTimeInterval)currentTime {
-    /* Called before each frame is rendered */
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    for (UITouch *touch in touches) {
+        [self _adjustPlayerDirection:[touch locationInNode:self]];
+    }
+}
 
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    self.playerDirection = [MAVector vectorZero];
+}
+
+-(void)update:(CFTimeInterval)currentTime {
+    CFTimeInterval deltaTime = currentTime - self.lastUpdateTime;
+
+    CGFloat deltaX = self.playerDirection.x * self.playerSpeed * deltaTime;
+    CGFloat deltaY = self.playerDirection.y * self.playerSpeed * deltaTime;
+
+    self.player.position = CGPointMake(self.player.position.x + deltaX,
+                                       self.player.position.y + deltaY);
+
+
+    self.lastUpdateTime = currentTime;
 }
 
 @end
