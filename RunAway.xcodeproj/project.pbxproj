@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BF28409718FB50E200734D5E /* MAPlayerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409618FB50E200734D5E /* MAPlayerNode.m */; };
+		BF28409A18FB514100734D5E /* MAVector.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409918FB514100734D5E /* MAVector.m */; };
 		BFE358FE18F9EEE9004301B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE358FD18F9EEE9004301B7 /* Foundation.framework */; };
 		BFE3590018F9EEE9004301B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */; };
 		BFE3590218F9EEE9004301B7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3590118F9EEE9004301B7 /* UIKit.framework */; };
@@ -38,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BF28409518FB50E200734D5E /* MAPlayerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAPlayerNode.h; sourceTree = "<group>"; };
+		BF28409618FB50E200734D5E /* MAPlayerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAPlayerNode.m; sourceTree = "<group>"; };
+		BF28409818FB514100734D5E /* MAVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAVector.h; sourceTree = "<group>"; };
+		BF28409918FB514100734D5E /* MAVector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAVector.m; sourceTree = "<group>"; };
 		BFE358FA18F9EEE9004301B7 /* RunAway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunAway.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE358FD18F9EEE9004301B7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -89,6 +95,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BF28409418FB50D100734D5E /* nodes */ = {
+			isa = PBXGroup;
+			children = (
+				BF28409518FB50E200734D5E /* MAPlayerNode.h */,
+				BF28409618FB50E200734D5E /* MAPlayerNode.m */,
+			);
+			path = nodes;
+			sourceTree = "<group>";
+		};
 		BFE358F118F9EEE9004301B7 = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +145,9 @@
 				BFE3591518F9EEE9004301B7 /* MAViewController.m */,
 				BFE3591718F9EEE9004301B7 /* MAMyScene.h */,
 				BFE3591818F9EEE9004301B7 /* MAMyScene.m */,
+				BF28409818FB514100734D5E /* MAVector.h */,
+				BF28409918FB514100734D5E /* MAVector.m */,
+				BF28409418FB50D100734D5E /* nodes */,
 				BFE3593C18F9F52D004301B7 /* fonts */,
 				BFE3593918F9F25A004301B7 /* sprites */,
 				BFE3591C18F9EEE9004301B7 /* Images.xcassets */,
@@ -283,6 +301,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF28409A18FB514100734D5E /* MAVector.m in Sources */,
+				BF28409718FB50E200734D5E /* MAPlayerNode.m in Sources */,
 				BFE3591918F9EEE9004301B7 /* MAMyScene.m in Sources */,
 				BFE3591018F9EEE9004301B7 /* MAAppDelegate.m in Sources */,
 				BFE3591618F9EEE9004301B7 /* MAViewController.m in Sources */,
@@ -493,6 +513,7 @@
 				BFE3593518F9EEE9004301B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BFE3593618F9EEE9004301B7 /* Build configuration list for PBXNativeTarget "RunAwayTests" */ = {
 			isa = XCConfigurationList;
@@ -501,6 +522,7 @@
 				BFE3593818F9EEE9004301B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
