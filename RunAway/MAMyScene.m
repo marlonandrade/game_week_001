@@ -80,8 +80,15 @@
     CGFloat deltaX = self.player.direction.x * self.player.moveSpeed * deltaTime;
     CGFloat deltaY = self.player.direction.y * self.player.moveSpeed * deltaTime;
 
-    self.player.position = CGPointMake(self.player.position.x + deltaX,
-                                       self.player.position.y + deltaY);
+    CGFloat x = self.player.position.x + deltaX;
+    CGFloat y = self.player.position.y + deltaY;
+
+    x = MAX(x, CGRectGetMinX(self.frame) + (self.player.size.width / 4.f));
+    x = MIN(x, CGRectGetMaxX(self.frame) - (self.player.size.width / 4.f));
+    y = MAX(y, CGRectGetMinY(self.frame) + (self.player.size.height / 4.f));
+    y = MIN(y, CGRectGetMaxY(self.frame) - (self.player.size.height / 4.f));
+
+    self.player.position = CGPointMake(x, y);
 
 
     self.lastUpdateTime = currentTime;
