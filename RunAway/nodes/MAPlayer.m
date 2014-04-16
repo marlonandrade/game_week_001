@@ -1,18 +1,18 @@
 //
-//  MAPlayerNode.m
+//  MAPlayer.m
 //  RunAway
 //
 //  Created by Marlon Andrade on 13/04/14.
 //  Copyright (c) 2014 MarlonAndrade. All rights reserved.
 //
 
-#import "MAPlayerNode.h"
+#import "MAPlayer.h"
 
-@implementation MAPlayerNode
+@implementation MAPlayer
 
 #pragma mark - Public Interface
 
-+ (MAPlayerNode *)playerNode {
++ (MAPlayer *)player {
     return [[self alloc] initWithImageNamed:@"player"];
 }
 

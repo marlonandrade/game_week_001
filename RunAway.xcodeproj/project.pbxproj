@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BF28409718FB50E200734D5E /* MAPlayerNode.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409618FB50E200734D5E /* MAPlayerNode.m */; };
+		BF28409718FB50E200734D5E /* MAPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409618FB50E200734D5E /* MAPlayer.m */; };
 		BF28409A18FB514100734D5E /* MAVector.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409918FB514100734D5E /* MAVector.m */; };
+		BF28409C18FE1BB900734D5E /* monster.png in Resources */ = {isa = PBXBuildFile; fileRef = BF28409B18FE1BB900734D5E /* monster.png */; };
+		BF28409F18FE1BCB00734D5E /* MAMonster.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409E18FE1BCB00734D5E /* MAMonster.m */; };
 		BFE358FE18F9EEE9004301B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE358FD18F9EEE9004301B7 /* Foundation.framework */; };
 		BFE3590018F9EEE9004301B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */; };
 		BFE3590218F9EEE9004301B7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3590118F9EEE9004301B7 /* UIKit.framework */; };
@@ -40,10 +42,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BF28409518FB50E200734D5E /* MAPlayerNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAPlayerNode.h; sourceTree = "<group>"; };
-		BF28409618FB50E200734D5E /* MAPlayerNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAPlayerNode.m; sourceTree = "<group>"; };
+		BF28409518FB50E200734D5E /* MAPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAPlayer.h; sourceTree = "<group>"; };
+		BF28409618FB50E200734D5E /* MAPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAPlayer.m; sourceTree = "<group>"; };
 		BF28409818FB514100734D5E /* MAVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAVector.h; sourceTree = "<group>"; };
 		BF28409918FB514100734D5E /* MAVector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAVector.m; sourceTree = "<group>"; };
+		BF28409B18FE1BB900734D5E /* monster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = monster.png; sourceTree = "<group>"; };
+		BF28409D18FE1BCB00734D5E /* MAMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAMonster.h; sourceTree = "<group>"; };
+		BF28409E18FE1BCB00734D5E /* MAMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAMonster.m; sourceTree = "<group>"; };
 		BFE358FA18F9EEE9004301B7 /* RunAway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunAway.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE358FD18F9EEE9004301B7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -98,8 +103,10 @@
 		BF28409418FB50D100734D5E /* nodes */ = {
 			isa = PBXGroup;
 			children = (
-				BF28409518FB50E200734D5E /* MAPlayerNode.h */,
-				BF28409618FB50E200734D5E /* MAPlayerNode.m */,
+				BF28409518FB50E200734D5E /* MAPlayer.h */,
+				BF28409618FB50E200734D5E /* MAPlayer.m */,
+				BF28409D18FE1BCB00734D5E /* MAMonster.h */,
+				BF28409E18FE1BCB00734D5E /* MAMonster.m */,
 			);
 			path = nodes;
 			sourceTree = "<group>";
@@ -188,6 +195,7 @@
 		BFE3593918F9F25A004301B7 /* sprites */ = {
 			isa = PBXGroup;
 			children = (
+				BF28409B18FE1BB900734D5E /* monster.png */,
 				BFE3593A18F9F25A004301B7 /* player.png */,
 			);
 			path = sprites;
@@ -280,6 +288,7 @@
 			files = (
 				BFE3590A18F9EEE9004301B7 /* InfoPlist.strings in Resources */,
 				BFE3591D18F9EEE9004301B7 /* Images.xcassets in Resources */,
+				BF28409C18FE1BB900734D5E /* monster.png in Resources */,
 				BFE3593E18F9F52D004301B7 /* 04B_19__.TTF in Resources */,
 				BFE3593B18F9F25A004301B7 /* player.png in Resources */,
 				BFE3591318F9EEE9004301B7 /* Main.storyboard in Resources */,
@@ -302,9 +311,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF28409A18FB514100734D5E /* MAVector.m in Sources */,
-				BF28409718FB50E200734D5E /* MAPlayerNode.m in Sources */,
+				BF28409718FB50E200734D5E /* MAPlayer.m in Sources */,
 				BFE3591918F9EEE9004301B7 /* MAMyScene.m in Sources */,
 				BFE3591018F9EEE9004301B7 /* MAAppDelegate.m in Sources */,
+				BF28409F18FE1BCB00734D5E /* MAMonster.m in Sources */,
 				BFE3591618F9EEE9004301B7 /* MAViewController.m in Sources */,
 				BFE3590C18F9EEE9004301B7 /* main.m in Sources */,
 			);

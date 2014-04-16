@@ -1,5 +1,5 @@
 //
-//  MAPlayerNode.h
+//  MAPlayer.h
 //  RunAway
 //
 //  Created by Marlon Andrade on 13/04/14.
@@ -10,11 +10,11 @@
 
 #import "MAVector.h"
 
-@interface MAPlayerNode : SKSpriteNode
+@interface MAPlayer : SKSpriteNode
 
 @property (nonatomic, assign) int moveSpeed;
 @property (nonatomic, strong) MAVector *direction;
 
-+ (MAPlayerNode *)playerNode;
++ (MAPlayer *)player;
 
 @end

@@ -10,4 +10,6 @@
 
 @interface MAMonster : SKSpriteNode
 
++ (MAMonster *)monster;
+
 @end

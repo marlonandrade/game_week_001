@@ -8,12 +8,20 @@
 
 #import "MAMyScene.h"
 
-#import "MAPlayerNode.h"
+#import "MAMonster.h"
+#import "MAPlayer.h"
 #import "MAVector.h"
+
+typedef enum {
+    MAMonsterSpawnPositionTop = 0,
+    MAMonsterSpawnPositionLeft,
+    MAMonsterSpawnPositionBottom,
+    MAMonsterSpawnPositionRight
+} MAMonsterSpawnPosition;
 
 @interface MAMyScene()
 
-@property (nonatomic, strong) MAPlayerNode *player;
+@property (nonatomic, strong) MAPlayer *player;
 @property (nonatomic, strong) SKLabelNode *scoreLabel;
 
 @property (nonatomic, assign) int score;
@@ -36,7 +44,7 @@
     if (self = [super initWithSize:size]) {
         self.backgroundColor = [SKColor colorWithWhite:0.2f alpha:1.f];
 
-        self.player = [MAPlayerNode playerNode];
+        self.player = [MAPlayer player];
         self.player.position = CGPointMake(CGRectGetMidX(self.frame),
                                            CGRectGetMidY(self.frame));
         [self addChild:self.player];
@@ -48,9 +56,67 @@
                                                CGRectGetMaxY(self.frame) - 50.f);
         [self addChild:self.scoreLabel];
 
+        SKAction *spawnMonster = [SKAction sequence:@[
+            [SKAction performSelector:@selector(_spawnMonster) onTarget:self],
+            [SKAction waitForDuration:0.4f]
+        ]];
+        [self runAction:[SKAction repeatActionForever:spawnMonster]];
+
         self.score = 0;
     }
     return self;
+}
+
+- (void)_spawnMonster {
+    self.score++;
+    MAMonsterSpawnPosition spawnPosition = arc4random_uniform(4);
+
+    CGFloat x;
+    CGFloat y;
+
+    MAMonster *monster = [MAMonster monster];
+
+    CGFloat angle = drand48() - 0.5f;
+    CGFloat destinationX;
+    CGFloat destinationY;
+
+    switch (spawnPosition) {
+        case MAMonsterSpawnPositionTop:
+            x = arc4random_uniform(self.frame.size.width);
+            y = self.frame.size.height + monster.size.height;
+            destinationX = tanf(angle) * self.frame.size.height + (monster.size.height * 2);
+            destinationY = - monster.size.height;
+            break;
+        case MAMonsterSpawnPositionLeft:
+            x = - monster.size.width;
+            y = arc4random_uniform(self.frame.size.height);
+            destinationX = self.frame.size.width + monster.size.width;
+            destinationY = tanf(angle) * self.frame.size.width + (monster.size.width * 2);
+            break;
+        case MAMonsterSpawnPositionBottom:
+            x = arc4random_uniform(self.frame.size.width);
+            y = - monster.size.height;
+            destinationX = tanf(angle) * self.frame.size.height + (monster.size.height * 2);
+            destinationY = self.frame.size.height + monster.size.height;
+            break;
+        case MAMonsterSpawnPositionRight:
+            x = self.frame.size.width + monster.size.width;
+            y = arc4random_uniform(self.frame.size.height);
+            destinationX = - monster.size.width;
+            destinationY = tanf(angle) * self.frame.size.width + (monster.size.width * 2);
+            break;
+    }
+
+    monster.position = CGPointMake(x, y);
+    CGPoint destination = CGPointMake(destinationX, destinationY);
+
+    [self addChild:monster];
+
+    CGFloat duration = arc4random_uniform(3) + 2;
+    [monster runAction:[SKAction sequence:@[
+        [SKAction moveTo:destination duration:duration],
+        [SKAction removeFromParent]
+    ]]];
 }
 
 - (void)_adjustPlayerDirection:(CGPoint)location {
