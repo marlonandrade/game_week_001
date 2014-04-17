@@ -8,6 +8,8 @@
 
 #import "MAMonster.h"
 
+#import "MAConstants.h"
+
 @implementation MAMonster
 
 #pragma mark - Public Interface
@@ -21,7 +23,13 @@
 - (id)initWithImageNamed:(NSString *)name {
     self = [super initWithImageNamed:name];
     if (self) {
+        self.name = MONSTER_NODE_NAME;
 
+        self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
+        self.physicsBody.categoryBitMask = monsterCategory;
+        self.physicsBody.contactTestBitMask = playerCategory;
+        self.physicsBody.collisionBitMask = 0;
+        self.physicsBody.usesPreciseCollisionDetection = YES;
     }
     return self;
 }

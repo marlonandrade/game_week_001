@@ -49,6 +49,7 @@
 		BF28409B18FE1BB900734D5E /* monster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = monster.png; sourceTree = "<group>"; };
 		BF28409D18FE1BCB00734D5E /* MAMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAMonster.h; sourceTree = "<group>"; };
 		BF28409E18FE1BCB00734D5E /* MAMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAMonster.m; sourceTree = "<group>"; };
+		BF2840A018FF66C500734D5E /* MAConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAConstants.h; sourceTree = "<group>"; };
 		BFE358FA18F9EEE9004301B7 /* RunAway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunAway.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE358FD18F9EEE9004301B7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -154,6 +155,7 @@
 				BFE3591818F9EEE9004301B7 /* MAMyScene.m */,
 				BF28409818FB514100734D5E /* MAVector.h */,
 				BF28409918FB514100734D5E /* MAVector.m */,
+				BF2840A018FF66C500734D5E /* MAConstants.h */,
 				BF28409418FB50D100734D5E /* nodes */,
 				BFE3593C18F9F52D004301B7 /* fonts */,
 				BFE3593918F9F25A004301B7 /* sprites */,

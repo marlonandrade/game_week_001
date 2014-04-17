@@ -8,6 +8,8 @@
 
 #import "MAPlayer.h"
 
+#import "MAConstants.h"
+
 @implementation MAPlayer
 
 #pragma mark - Public Interface
@@ -19,8 +21,16 @@
 - (id)initWithImageNamed:(NSString *)name {
     self = [super initWithImageNamed:name];
     if (self) {
+        self.name = PLAYER_NODE_NAME;
+
         self.direction = [MAVector vectorZero];
         self.moveSpeed = 100;
+
+        self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
+        self.physicsBody.categoryBitMask = playerCategory;
+        self.physicsBody.contactTestBitMask = monsterCategory;
+        self.physicsBody.collisionBitMask = 0;
+        self.physicsBody.usesPreciseCollisionDetection = YES;
     }
     return self;
 }
