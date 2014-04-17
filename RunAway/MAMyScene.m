@@ -24,8 +24,11 @@ typedef enum {
 
 @property (nonatomic, strong) MAPlayer *player;
 @property (nonatomic, strong) SKLabelNode *scoreLabel;
+@property (nonatomic, strong) SKLabelNode *highScoreLabel;
 
 @property (nonatomic, assign) int score;
+@property (nonatomic, assign) int highScore;
+
 @property (nonatomic, assign, getter = isGameStarted) bool gameStarted;
 @property (nonatomic, assign, getter = isGameOver) bool gameOver;
 
@@ -35,12 +38,27 @@ typedef enum {
 
 @implementation MAMyScene
 
+#pragma mark - Getter
+
+- (int)highScore {
+    return [[NSUserDefaults standardUserDefaults] integerForKey:HIGH_SCORE_KEY];
+}
+
 #pragma mark - Setter
 
 - (void)setScore:(int)score {
     _score = score;
 
     self.scoreLabel.text = [NSString stringWithFormat:@"%d", score];
+
+    if (self.score > self.highScore) {
+        self.highScore = self.score;
+    }
+}
+
+- (void)setHighScore:(int)highScore {
+    [[NSUserDefaults standardUserDefaults] setInteger:highScore forKey:HIGH_SCORE_KEY];
+    self.highScoreLabel.text = [NSString stringWithFormat:@"%d", highScore];
 }
 
 #pragma mark - Designated Initializer
@@ -58,6 +76,25 @@ typedef enum {
         self.scoreLabel.position = CGPointMake(CGRectGetMidX(self.frame),
                                                CGRectGetMaxY(self.frame) - 50.f);
         [self addChild:self.scoreLabel];
+
+        SKLabelNode *highScoreDescription = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
+        highScoreDescription.fontColor = [SKColor colorWithWhite:0.7f alpha:1.f];
+        highScoreDescription.fontSize = 12.f;
+        highScoreDescription.position = CGPointMake(CGRectGetMidX(self.frame) + 80.f,
+                                                    CGRectGetMaxY(self.frame) - 50.f);
+        highScoreDescription.text = @"Highscore:";
+
+        [self addChild:highScoreDescription];
+
+
+        self.highScoreLabel = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
+        self.highScoreLabel.fontColor = [SKColor whiteColor];
+        self.highScoreLabel.fontSize = 30.f;
+        self.highScoreLabel.position = CGPointMake(CGRectGetMidX(self.frame) + 130.f,
+                                                   CGRectGetMaxY(self.frame) - 50.f);
+        self.highScoreLabel.text = [NSString stringWithFormat:@"%d", self.highScore];
+
+        [self addChild:self.highScoreLabel];
 
         SKLabelNode *runAway = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
         runAway.name = @"run_away";

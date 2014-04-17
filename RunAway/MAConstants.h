@@ -13,3 +13,5 @@ static const uint32_t monsterCategory = 0x1 << 1;
 
 #define MONSTER_NODE_NAME @"monster"
 #define PLAYER_NODE_NAME @"player"
+
+#define HIGH_SCORE_KEY @"high_score_key"
