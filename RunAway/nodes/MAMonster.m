@@ -25,7 +25,7 @@
     if (self) {
         self.name = MONSTER_NODE_NAME;
 
-        self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
+        self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:12.f];
         self.physicsBody.categoryBitMask = monsterCategory;
         self.physicsBody.contactTestBitMask = playerCategory;
         self.physicsBody.collisionBitMask = 0;

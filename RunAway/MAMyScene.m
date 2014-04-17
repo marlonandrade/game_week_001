@@ -26,6 +26,7 @@ typedef enum {
 @property (nonatomic, strong) SKLabelNode *scoreLabel;
 
 @property (nonatomic, assign) int score;
+@property (nonatomic, assign, getter = isGameStarted) bool gameStarted;
 @property (nonatomic, assign, getter = isGameOver) bool gameOver;
 
 @property (nonatomic, assign) CFTimeInterval lastUpdateTime;
@@ -51,9 +52,6 @@ typedef enum {
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.gravity = CGVectorMake(0.f, 0.f);
 
-        self.player = [MAPlayer player];
-        [self addChild:self.player];
-
         self.scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
         self.scoreLabel.fontColor = [SKColor whiteColor];
         self.scoreLabel.fontSize = 30.f;
@@ -61,7 +59,28 @@ typedef enum {
                                                CGRectGetMaxY(self.frame) - 50.f);
         [self addChild:self.scoreLabel];
 
-        [self _resetGame];
+        SKLabelNode *runAway = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
+        runAway.name = @"run_away";
+        runAway.fontSize = 50.f;
+        runAway.text = @"Run Away!";
+        runAway.position = CGPointMake(CGRectGetMidX(self.frame),
+                                             CGRectGetMidY(self.frame) + 20.f);
+        [self addChild:runAway];
+
+        SKLabelNode *tapToStart = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
+        tapToStart.name = @"run_away_start";
+        tapToStart.fontSize = 16.f;
+        tapToStart.text = @"Tap screen to start";
+        tapToStart.position = CGPointMake(CGRectGetMidX(self.frame),
+                                          CGRectGetMidY(self.frame) - 30.f);
+        [self addChild:tapToStart];
+
+        SKAction *blinkAction = [SKAction sequence:@[
+            [SKAction fadeOutWithDuration:2.f],
+            [SKAction fadeInWithDuration:2.f],
+        ]];
+
+        [tapToStart runAction:[SKAction repeatActionForever:blinkAction]];
     }
     return self;
 }
@@ -69,7 +88,7 @@ typedef enum {
 #pragma mark - UIResponder Methods
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    if (self.isGameOver) {
+    if (!self.isGameStarted || self.isGameOver) {
         [self _resetGame];
     } else {
         for (UITouch *touch in touches) {
@@ -113,10 +132,16 @@ typedef enum {
 #pragma mark - Private Interface
 
 - (void)_resetGame {
+    self.gameStarted = YES;
     self.gameOver = NO;
 
+    [[self childNodeWithName:@"run_away"] removeFromParent];
+    [[self childNodeWithName:@"run_away_start"] removeFromParent];
     [[self childNodeWithName:@"game_over"] removeFromParent];
     [[self childNodeWithName:@"game_over_restart"] removeFromParent];
+
+    self.player = [MAPlayer player];
+    [self addChild:self.player];
 
     self.player.position = CGPointMake(CGRectGetMidX(self.frame),
                                        CGRectGetMidY(self.frame));
@@ -187,12 +212,17 @@ typedef enum {
 }
 
 - (void)_gameOver {
+    [self removeAllActions];
+
     self.gameOver = YES;
 
-    [self removeAllActions];
+    [[self childNodeWithName:PLAYER_NODE_NAME] runAction:[SKAction sequence:@[
+        [SKAction removeFromParent]
+    ]]];
 
     [self enumerateChildNodesWithName:MONSTER_NODE_NAME usingBlock:^(SKNode *node, BOOL *stop) {
         [node runAction:[SKAction fadeOutWithDuration:1.f]];
+        node.physicsBody = nil;
     }];
 
     SKLabelNode *gameOverLabel = [SKLabelNode labelNodeWithFontNamed:@"04b19"];

@@ -26,7 +26,7 @@
         self.direction = [MAVector vectorZero];
         self.moveSpeed = 100;
 
-        self.physicsBody = [SKPhysicsBody bodyWithRectangleOfSize:self.size];
+        self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:12.f];
         self.physicsBody.categoryBitMask = playerCategory;
         self.physicsBody.contactTestBitMask = monsterCategory;
         self.physicsBody.collisionBitMask = 0;
