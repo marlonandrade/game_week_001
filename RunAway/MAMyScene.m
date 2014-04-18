@@ -9,6 +9,7 @@
 #import "MAMyScene.h"
 
 #import "MAConstants.h"
+#import "MAGameLayer.h"
 #import "MAMonster.h"
 #import "MAPlayer.h"
 #import "MAVector.h"
@@ -20,17 +21,29 @@ typedef enum {
     MAMonsterSpawnPositionRight
 } MAMonsterSpawnPosition;
 
+typedef enum {
+    MAGameStateInitialScreen = 0,
+    MAGameStatePlaying,
+    MAGameStateJustLost,
+    MAGameStateGameOver
+} MAGameState;
+
 @interface MAMyScene() <SKPhysicsContactDelegate>
+
+@property (nonatomic, assign) MAGameState state;
+
+@property (nonatomic, strong) SKNode *initialScreenLayer;
+@property (nonatomic, strong) SKNode *hudLayer;
+@property (nonatomic, strong) SKNode *gameLayer;
+@property (nonatomic, strong) SKNode *gameOverLayer;
 
 @property (nonatomic, strong) MAPlayer *player;
 @property (nonatomic, strong) SKLabelNode *scoreLabel;
 @property (nonatomic, strong) SKLabelNode *highScoreLabel;
+@property (nonatomic, strong) SKNode *touchScreenToRestartLabel;
 
 @property (nonatomic, assign) int score;
 @property (nonatomic, assign) int highScore;
-
-@property (nonatomic, assign, getter = isGameStarted) bool gameStarted;
-@property (nonatomic, assign, getter = isGameOver) bool gameOver;
 
 @property (nonatomic, assign) CFTimeInterval lastUpdateTime;
 
@@ -40,11 +53,103 @@ typedef enum {
 
 #pragma mark - Getter
 
+- (SKNode *)initialScreenLayer {
+    if (!_initialScreenLayer) {
+        _initialScreenLayer = [SKNode node];
+        _initialScreenLayer.alpha = 0.f;
+        _initialScreenLayer.position = CGPointMake(CGRectGetMidX(self.frame),
+                                                   CGRectGetMidY(self.frame));
+
+        SKNode *runAwayLabel = [self _createRunAwayLabel];
+        runAwayLabel.position = CGPointMake(0.f, 20.f);
+        [_initialScreenLayer addChild:runAwayLabel];
+
+        SKNode *touchToStartLabel = [self _createTouchToStartLabel];
+        touchToStartLabel.position = CGPointMake(0.f, -30.f);
+        [_initialScreenLayer addChild:touchToStartLabel];
+    }
+
+    return _initialScreenLayer;
+}
+
+- (SKNode *)hudLayer {
+    if (!_hudLayer) {
+        _hudLayer = [SKNode node];
+        _hudLayer.alpha = 0.f;
+
+        self.scoreLabel = [self _createScoreLabel];
+        self.scoreLabel.position = CGPointMake(CGRectGetMidX(self.frame),
+                                               CGRectGetMaxY(self.frame) - 50.f);
+        [_hudLayer addChild:self.scoreLabel];
+
+        SKNode *highScoreDescription = [self _createHighScoreDescriptionLabel];
+        highScoreDescription.position = CGPointMake(CGRectGetMidX(self.frame) + 80.f,
+                                                    CGRectGetMaxY(self.frame) - 50.f);
+        [_hudLayer addChild:highScoreDescription];
+
+        self.highScoreLabel = [self _createHighScoreLabel];
+        self.highScoreLabel.position = CGPointMake(CGRectGetMidX(self.frame) + 130.f,
+                                                   CGRectGetMaxY(self.frame) - 50.f);
+        [_hudLayer addChild:self.highScoreLabel];
+    }
+
+    return _hudLayer;
+}
+
+- (SKNode *)gameLayer {
+    if (!_gameLayer) {
+        _gameLayer = [MAGameLayer node];
+        _gameLayer.alpha = 0.f;
+
+        self.player = [MAPlayer player];
+        [_gameLayer addChild:self.player];
+    }
+    return _gameLayer;
+}
+
+- (SKNode *)gameOverLayer {
+    if (!_gameOverLayer) {
+        _gameOverLayer = [SKNode node];
+        _gameOverLayer.alpha = 0.f;
+
+        SKNode *gameOverLabel = [self _createGameOverLabel];
+        gameOverLabel.position = CGPointMake(CGRectGetMidX(self.frame),
+                                             CGRectGetMidY(self.frame) + 20.f);
+        [_gameOverLayer addChild:gameOverLabel];
+
+        self.touchScreenToRestartLabel = [self _createTouchToRestartLabel];
+        self.touchScreenToRestartLabel.position = CGPointMake(CGRectGetMidX(self.frame),
+                                                 CGRectGetMidY(self.frame) - 30.f);
+        [_gameOverLayer addChild:self.touchScreenToRestartLabel];
+    }
+
+    return _gameOverLayer;
+}
+
 - (int)highScore {
     return [[NSUserDefaults standardUserDefaults] integerForKey:HIGH_SCORE_KEY];
 }
 
 #pragma mark - Setter
+
+- (void)setState:(MAGameState)state {
+    _state = state;
+
+    switch (state) {
+        case MAGameStateInitialScreen:
+            [self _adjustStateForInitialScreen];
+            break;
+        case MAGameStatePlaying:
+            [self _adjustStateForPlaying];
+            break;
+        case MAGameStateJustLost:
+            [self _adjustStateForJustLost];
+            break;
+        case MAGameStateGameOver:
+            [self _adjustStateForGameOver];
+            break;
+    }
+}
 
 - (void)setScore:(int)score {
     _score = score;
@@ -63,71 +168,32 @@ typedef enum {
 
 #pragma mark - Designated Initializer
 
--(id)initWithSize:(CGSize)size {    
-    if (self = [super initWithSize:size]) {
+-(id)initWithSize:(CGSize)size {
+    self = [super initWithSize:size];
+
+    if (self) {
         self.backgroundColor = [SKColor colorWithWhite:0.2f alpha:1.f];
 
         self.physicsWorld.contactDelegate = self;
         self.physicsWorld.gravity = CGVectorMake(0.f, 0.f);
 
-        self.scoreLabel = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-        self.scoreLabel.fontColor = [SKColor whiteColor];
-        self.scoreLabel.fontSize = 30.f;
-        self.scoreLabel.position = CGPointMake(CGRectGetMidX(self.frame),
-                                               CGRectGetMaxY(self.frame) - 50.f);
-        [self addChild:self.scoreLabel];
+        [self addChild:self.initialScreenLayer];
+        [self addChild:self.hudLayer];
+        [self addChild:self.gameLayer];
+        [self addChild:self.gameOverLayer];
 
-        SKLabelNode *highScoreDescription = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-        highScoreDescription.fontColor = [SKColor colorWithWhite:0.7f alpha:1.f];
-        highScoreDescription.fontSize = 12.f;
-        highScoreDescription.position = CGPointMake(CGRectGetMidX(self.frame) + 80.f,
-                                                    CGRectGetMaxY(self.frame) - 50.f);
-        highScoreDescription.text = @"Highscore:";
-
-        [self addChild:highScoreDescription];
-
-
-        self.highScoreLabel = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-        self.highScoreLabel.fontColor = [SKColor whiteColor];
-        self.highScoreLabel.fontSize = 30.f;
-        self.highScoreLabel.position = CGPointMake(CGRectGetMidX(self.frame) + 130.f,
-                                                   CGRectGetMaxY(self.frame) - 50.f);
-        self.highScoreLabel.text = [NSString stringWithFormat:@"%d", self.highScore];
-
-        [self addChild:self.highScoreLabel];
-
-        SKLabelNode *runAway = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-        runAway.name = @"run_away";
-        runAway.fontSize = 50.f;
-        runAway.text = @"Run Away!";
-        runAway.position = CGPointMake(CGRectGetMidX(self.frame),
-                                             CGRectGetMidY(self.frame) + 20.f);
-        [self addChild:runAway];
-
-        SKLabelNode *tapToStart = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-        tapToStart.name = @"run_away_start";
-        tapToStart.fontSize = 16.f;
-        tapToStart.text = @"Tap screen to start";
-        tapToStart.position = CGPointMake(CGRectGetMidX(self.frame),
-                                          CGRectGetMidY(self.frame) - 30.f);
-        [self addChild:tapToStart];
-
-        SKAction *blinkAction = [SKAction sequence:@[
-            [SKAction fadeOutWithDuration:2.f],
-            [SKAction fadeInWithDuration:2.f],
-        ]];
-
-        [tapToStart runAction:[SKAction repeatActionForever:blinkAction]];
+        self.state = MAGameStateInitialScreen;
     }
+
     return self;
 }
 
 #pragma mark - UIResponder Methods
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    if (!self.isGameStarted || self.isGameOver) {
-        [self _resetGame];
-    } else {
+    if (self.state == MAGameStateInitialScreen || self.state == MAGameStateGameOver) {
+        self.state = MAGameStatePlaying;
+    } else if (self.state == MAGameStatePlaying) {
         for (UITouch *touch in touches) {
             [self _adjustPlayerDirection:[touch locationInNode:self]];
         }
@@ -135,8 +201,10 @@ typedef enum {
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    for (UITouch *touch in touches) {
-        [self _adjustPlayerDirection:[touch locationInNode:self]];
+    if (self.state == MAGameStatePlaying) {
+        for (UITouch *touch in touches) {
+            [self _adjustPlayerDirection:[touch locationInNode:self]];
+        }
     }
 }
 
@@ -162,33 +230,86 @@ typedef enum {
 
     self.player.position = CGPointMake(x, y);
 
-
     self.lastUpdateTime = currentTime;
 }
+
+#pragma mark - SKNode Creation
+
+- (SKNode *)_createRunAwayLabel {
+    SKLabelNode *runAway = [SKLabelNode labelNodeWithFontNamed:GAME_DEFAULT_FONT];
+    runAway.fontSize = 50.f;
+    runAway.text = @"Run Away!";
+
+    return runAway;
+}
+
+- (SKNode *)_createTouchToStartLabel {
+    return [self _createBlinkingLabelWithText:@"Touch screen to start"];
+}
+
+- (SKLabelNode *)_createScoreLabel {
+    SKLabelNode *scoreLabel = [SKLabelNode labelNodeWithFontNamed:GAME_DEFAULT_FONT];
+    scoreLabel.fontColor = [SKColor whiteColor];
+    scoreLabel.fontSize = 30.f;
+
+    return scoreLabel;
+}
+
+- (SKNode *)_createHighScoreDescriptionLabel {
+    SKLabelNode *highScoreDescription = [SKLabelNode labelNodeWithFontNamed:GAME_DEFAULT_FONT];
+    highScoreDescription.fontColor = [SKColor colorWithWhite:0.7f alpha:1.f];
+    highScoreDescription.fontSize = 12.f;
+    highScoreDescription.text = @"Highscore:";
+
+    return highScoreDescription;
+}
+
+- (SKLabelNode *)_createHighScoreLabel {
+    self.highScoreLabel = [SKLabelNode labelNodeWithFontNamed:GAME_DEFAULT_FONT];
+    self.highScoreLabel.fontColor = [SKColor whiteColor];
+    self.highScoreLabel.fontSize = 30.f;
+    self.highScoreLabel.text = [NSString stringWithFormat:@"%d", self.highScore];
+
+    return self.highScoreLabel;
+}
+
+- (SKNode *)_createGameOverLabel {
+    SKLabelNode *gameOverLabel = [SKLabelNode labelNodeWithFontNamed:GAME_DEFAULT_FONT];
+    gameOverLabel.fontSize = 45.f;
+    gameOverLabel.text = @"Game Over";
+
+    return gameOverLabel;
+}
+
+- (SKNode *)_createTouchToRestartLabel {
+    return [self _createBlinkingLabelWithText:@"Touch screen to restart"];
+}
+
+- (SKNode *)_createBlinkingLabelWithText:(NSString *)text {
+    SKLabelNode *blinkLabel = [SKLabelNode labelNodeWithFontNamed:GAME_DEFAULT_FONT];
+    blinkLabel.fontSize = 16.f;
+    blinkLabel.text = text;
+
+    SKAction *blinkAction = [SKAction sequence:@[
+        [SKAction fadeOutWithDuration:2.f],
+        [SKAction fadeInWithDuration:2.f],
+    ]];
+
+    [blinkLabel runAction:[SKAction repeatActionForever:blinkAction]];
+
+    return blinkLabel;
+}
+
 
 #pragma mark - Private Interface
 
 - (void)_resetGame {
-    self.gameStarted = YES;
-    self.gameOver = NO;
-
     [[self childNodeWithName:@"run_away"] removeFromParent];
     [[self childNodeWithName:@"run_away_start"] removeFromParent];
     [[self childNodeWithName:@"game_over"] removeFromParent];
     [[self childNodeWithName:@"game_over_restart"] removeFromParent];
 
-    self.player = [MAPlayer player];
-    [self addChild:self.player];
 
-    self.player.position = CGPointMake(CGRectGetMidX(self.frame),
-                                       CGRectGetMidY(self.frame));
-    self.score = 0;
-
-    SKAction *spawnMonster = [SKAction sequence:@[
-        [SKAction performSelector:@selector(_spawnMonster) onTarget:self],
-        [SKAction waitForDuration:0.4f]
-    ]];
-    [self runAction:[SKAction repeatActionForever:spawnMonster]];
 }
 
 - (void)_spawnMonster {
@@ -234,7 +355,7 @@ typedef enum {
     monster.position = CGPointMake(x, y);
     CGPoint destination = CGPointMake(destinationX, destinationY);
 
-    [self addChild:monster];
+    [self.gameLayer addChild:monster];
 
     CGFloat duration = arc4random_uniform(3) + 2;
     [monster runAction:[SKAction sequence:@[
@@ -248,49 +369,69 @@ typedef enum {
                                                  Y:location.y - self.player.position.y] normalize];
 }
 
-- (void)_gameOver {
-    [self removeAllActions];
+- (void)_changeToGameOver {
+    self.state = MAGameStateGameOver;
+}
 
-    self.gameOver = YES;
+#pragma mark - State Change
 
-    [[self childNodeWithName:PLAYER_NODE_NAME] runAction:[SKAction sequence:@[
-        [SKAction removeFromParent]
-    ]]];
+- (void)_adjustStateForInitialScreen {
+    self.initialScreenLayer.alpha = 1.f;
+}
 
-    [self enumerateChildNodesWithName:MONSTER_NODE_NAME usingBlock:^(SKNode *node, BOOL *stop) {
-        [node runAction:[SKAction fadeOutWithDuration:1.f]];
-        node.physicsBody = nil;
-    }];
+- (void)_adjustStateForPlaying {
+    if (self.initialScreenLayer.alpha) {
+        [self.initialScreenLayer runAction:[SKAction fadeOutWithDuration:0.3f]];
+    }
 
-    SKLabelNode *gameOverLabel = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-    gameOverLabel.name = @"game_over";
-    gameOverLabel.fontSize = 45.f;
-    gameOverLabel.text = @"Game Over";
-    gameOverLabel.position = CGPointMake(CGRectGetMidX(self.frame),
-                                         CGRectGetMidY(self.frame) + 20.f);
-    [self addChild:gameOverLabel];
+    if (self.gameOverLayer.alpha) {
+        [self.gameOverLayer runAction:[SKAction fadeOutWithDuration:0.3f]];
+    }
 
-    SKLabelNode *tapToRestart = [SKLabelNode labelNodeWithFontNamed:@"04b19"];
-    tapToRestart.name = @"game_over_restart";
-    tapToRestart.fontSize = 16.f;
-    tapToRestart.text = @"Tap screen to restart";
-    tapToRestart.position = CGPointMake(CGRectGetMidX(self.frame),
-                                        CGRectGetMidY(self.frame) - 30.f);
-    [self addChild:tapToRestart];
+    if (!self.gameLayer.alpha) {
+        [self.gameLayer runAction:[SKAction fadeInWithDuration:0.3f]];
+    }
 
-    SKAction *blinkAction = [SKAction sequence:@[
-        [SKAction fadeOutWithDuration:2.f],
-        [SKAction fadeInWithDuration:2.f],
+    if (!self.hudLayer.alpha) {
+        [self.hudLayer runAction:[SKAction fadeInWithDuration:0.3f]];
+    }
+
+    self.player.position = CGPointMake(CGRectGetMidX(self.frame),
+                                       CGRectGetMidY(self.frame));
+    self.score = 0;
+
+    SKAction *spawnMonster = [SKAction sequence:@[
+        [SKAction performSelector:@selector(_spawnMonster) onTarget:self],
+        [SKAction waitForDuration:0.4f]
     ]];
+    [self runAction:[SKAction repeatActionForever:spawnMonster]];
+}
 
-    [tapToRestart runAction:[SKAction repeatActionForever:blinkAction]];
+- (void)_adjustStateForJustLost {
+    [self.touchScreenToRestartLabel removeFromParent];
+
+    if (!self.gameOverLayer.alpha) {
+        [self.gameOverLayer runAction:[SKAction fadeInWithDuration:0.3f]];
+    }
+
+    if (self.gameLayer.alpha) {
+        [self.gameLayer runAction:[SKAction fadeOutWithDuration:0.3f]];
+    }
+
+    [self removeAllActions];
+}
+
+- (void)_adjustStateForGameOver {
+    self.touchScreenToRestartLabel.alpha = 0.f;
+    [self.gameOverLayer addChild:self.touchScreenToRestartLabel];
 }
 
 #pragma mark - SKPhysicsContactDelegate Methods
 
 - (void)didBeginContact:(SKPhysicsContact *)contact {
-    if (!self.isGameOver) {
-        [self _gameOver];
+    if (self.state == MAGameStatePlaying) {
+        self.state = MAGameStateJustLost;
+        [self performSelector:@selector(_changeToGameOver) withObject:nil afterDelay:1.5f];
     }
 }
 

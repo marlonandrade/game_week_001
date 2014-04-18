@@ -11,6 +11,7 @@
 		BF28409A18FB514100734D5E /* MAVector.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409918FB514100734D5E /* MAVector.m */; };
 		BF28409C18FE1BB900734D5E /* monster.png in Resources */ = {isa = PBXBuildFile; fileRef = BF28409B18FE1BB900734D5E /* monster.png */; };
 		BF28409F18FE1BCB00734D5E /* MAMonster.m in Sources */ = {isa = PBXBuildFile; fileRef = BF28409E18FE1BCB00734D5E /* MAMonster.m */; };
+		BF2840A519016F7100734D5E /* MAGameLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BF2840A419016F7100734D5E /* MAGameLayer.m */; };
 		BFE358FE18F9EEE9004301B7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE358FD18F9EEE9004301B7 /* Foundation.framework */; };
 		BFE3590018F9EEE9004301B7 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */; };
 		BFE3590218F9EEE9004301B7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE3590118F9EEE9004301B7 /* UIKit.framework */; };
@@ -50,6 +51,8 @@
 		BF28409D18FE1BCB00734D5E /* MAMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAMonster.h; sourceTree = "<group>"; };
 		BF28409E18FE1BCB00734D5E /* MAMonster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAMonster.m; sourceTree = "<group>"; };
 		BF2840A018FF66C500734D5E /* MAConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAConstants.h; sourceTree = "<group>"; };
+		BF2840A319016F7100734D5E /* MAGameLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAGameLayer.h; sourceTree = "<group>"; };
+		BF2840A419016F7100734D5E /* MAGameLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAGameLayer.m; sourceTree = "<group>"; };
 		BFE358FA18F9EEE9004301B7 /* RunAway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunAway.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFE358FD18F9EEE9004301B7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BFE358FF18F9EEE9004301B7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -104,10 +107,12 @@
 		BF28409418FB50D100734D5E /* nodes */ = {
 			isa = PBXGroup;
 			children = (
-				BF28409518FB50E200734D5E /* MAPlayer.h */,
-				BF28409618FB50E200734D5E /* MAPlayer.m */,
+				BF2840A319016F7100734D5E /* MAGameLayer.h */,
+				BF2840A419016F7100734D5E /* MAGameLayer.m */,
 				BF28409D18FE1BCB00734D5E /* MAMonster.h */,
 				BF28409E18FE1BCB00734D5E /* MAMonster.m */,
+				BF28409518FB50E200734D5E /* MAPlayer.h */,
+				BF28409618FB50E200734D5E /* MAPlayer.m */,
 			);
 			path = nodes;
 			sourceTree = "<group>";
@@ -317,6 +322,7 @@
 				BFE3591918F9EEE9004301B7 /* MAMyScene.m in Sources */,
 				BFE3591018F9EEE9004301B7 /* MAAppDelegate.m in Sources */,
 				BF28409F18FE1BCB00734D5E /* MAMonster.m in Sources */,
+				BF2840A519016F7100734D5E /* MAGameLayer.m in Sources */,
 				BFE3591618F9EEE9004301B7 /* MAViewController.m in Sources */,
 				BFE3590C18F9EEE9004301B7 /* main.m in Sources */,
 			);
