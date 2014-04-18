@@ -300,17 +300,7 @@ typedef enum {
     return blinkLabel;
 }
 
-
 #pragma mark - Private Interface
-
-- (void)_resetGame {
-    [[self childNodeWithName:@"run_away"] removeFromParent];
-    [[self childNodeWithName:@"run_away_start"] removeFromParent];
-    [[self childNodeWithName:@"game_over"] removeFromParent];
-    [[self childNodeWithName:@"game_over_restart"] removeFromParent];
-
-
-}
 
 - (void)_spawnMonster {
     self.score++;
